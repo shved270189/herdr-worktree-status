@@ -7,7 +7,7 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
 export HERDR_PLUGIN_STATE_DIR="$tmp/state dir"
-export HERDR_PLUGIN_ID="bondev.worktree-status"
+export HERDR_PLUGIN_ID="shved270189.worktree-status"
 export HERDR_BIN_PATH="$tmp/fake-herdr"
 export FAKE_HERDR_LOG="$tmp/herdr.log"
 export FAKE_HERDR_WORKSPACES="$tmp/workspaces.json"
@@ -56,9 +56,9 @@ assert_eq "$(load_status "/p/c")" "done" "other row untouched"
 
 # --- apply_status -----------------------------------------------------------
 apply_status w1 blocked
-assert_eq "$(last_call)" "workspace report-metadata w1 --source bondev.worktree-status --token worktree_status=⛔" "set token"
+assert_eq "$(last_call)" "workspace report-metadata w1 --source shved270189.worktree-status --token worktree_status=⛔" "set token"
 apply_status w1 ""
-assert_eq "$(last_call)" "workspace report-metadata w1 --source bondev.worktree-status --clear-token worktree_status" "clear token"
+assert_eq "$(last_call)" "workspace report-metadata w1 --source shved270189.worktree-status --clear-token worktree_status" "clear token"
 apply_status wBAD "done" && fail "herdr failure should propagate"
 (apply_status w1 bogus 2>/dev/null) && fail "unknown status should fail"
 
@@ -66,17 +66,17 @@ apply_status wBAD "done" && fail "herdr failure should propagate"
 : > "$FAKE_HERDR_LOG"
 HERDR_WORKSPACE_ID=w1 HERDR_PLUGIN_CONTEXT_JSON='{"workspace_id":"w1","worktree":{"checkout_path":"/p/a b"}}' \
   bash "$root/bin/set-status"
-assert_eq "$(last_call)" "plugin pane open --plugin bondev.worktree-status --entrypoint status-picker --env WORKTREE_STATUS_WORKSPACE_ID=w1 --env WORKTREE_STATUS_KEY=/p/a b --focus" "action opens popup with env"
+assert_eq "$(last_call)" "plugin pane open --plugin shved270189.worktree-status --entrypoint status-picker --env WORKTREE_STATUS_WORKSPACE_ID=w1 --env WORKTREE_STATUS_KEY=/p/a b --focus" "action opens popup with env"
 (HERDR_WORKSPACE_ID='' bash "$root/bin/set-status" 2>"$tmp/err") && fail "missing workspace should fail"
 grep -q HERDR_WORKSPACE_ID "$tmp/err" || fail "useful error expected"
 
 # --- picker -----------------------------------------------------------------
 rm -f "$(state_file)"; : > "$FAKE_HERDR_LOG"
 printf '\033[B\033[B\r' | WORKTREE_STATUS_WORKSPACE_ID=w1 WORKTREE_STATUS_KEY="/p/a b" bash "$root/bin/picker" >/dev/null
-assert_eq "$(last_call)" "workspace report-metadata w1 --source bondev.worktree-status --token worktree_status=👀" "down down enter -> review"
+assert_eq "$(last_call)" "workspace report-metadata w1 --source shved270189.worktree-status --token worktree_status=👀" "down down enter -> review"
 assert_eq "$(load_status "/p/a b")" review "picker persists"
 printf 'jjj\r' | WORKTREE_STATUS_WORKSPACE_ID=w1 WORKTREE_STATUS_KEY="/p/a b" bash "$root/bin/picker" >/dev/null
-assert_eq "$(last_call)" "workspace report-metadata w1 --source bondev.worktree-status --clear-token worktree_status" "j x3 from review -> clear"
+assert_eq "$(last_call)" "workspace report-metadata w1 --source shved270189.worktree-status --clear-token worktree_status" "j x3 from review -> clear"
 assert_eq "$(load_status "/p/a b")" "" "picker clear forgets"
 save_status "/p/a b" "done"; : > "$FAKE_HERDR_LOG"
 printf 'q' | WORKTREE_STATUS_WORKSPACE_ID=w1 WORKTREE_STATUS_KEY="/p/a b" bash "$root/bin/picker" >/dev/null
@@ -84,7 +84,7 @@ printf '\033' | WORKTREE_STATUS_WORKSPACE_ID=w1 WORKTREE_STATUS_KEY="/p/a b" bas
 [ ! -s "$FAKE_HERDR_LOG" ] || fail "cancel must not call herdr"
 assert_eq "$(load_status "/p/a b")" "done" "cancel keeps state"
 printf '\r' | WORKTREE_STATUS_WORKSPACE_ID=w1 WORKTREE_STATUS_KEY="/p/a b" bash "$root/bin/picker" >/dev/null
-assert_eq "$(last_call)" "workspace report-metadata w1 --source bondev.worktree-status --token worktree_status=✅" "preselects current status"
+assert_eq "$(last_call)" "workspace report-metadata w1 --source shved270189.worktree-status --token worktree_status=✅" "preselects current status"
 (printf '\r' | bash "$root/bin/picker" 2>"$tmp/err") && fail "picker without env should fail"
 grep -q WORKTREE_STATUS "$tmp/err" || fail "useful picker error expected"
 
@@ -99,9 +99,9 @@ save_status "$WT_C" "done"
 save_status "$tmp/gone" review
 : > "$FAKE_HERDR_LOG"
 bash "$root/bin/restore-statuses"
-grep -q "report-metadata w1 --source bondev.worktree-status --token worktree_status=🔨" "$FAKE_HERDR_LOG" || fail "restore w1 by path"
-grep -q "report-metadata w2 --source bondev.worktree-status --token worktree_status=📝" "$FAKE_HERDR_LOG" || fail "restore w2 by id"
-grep -q "report-metadata w3 --source bondev.worktree-status --token worktree_status=✅" "$FAKE_HERDR_LOG" || fail "restore w3 (dir missing but open)"
+grep -q "report-metadata w1 --source shved270189.worktree-status --token worktree_status=🔨" "$FAKE_HERDR_LOG" || fail "restore w1 by path"
+grep -q "report-metadata w2 --source shved270189.worktree-status --token worktree_status=📝" "$FAKE_HERDR_LOG" || fail "restore w2 by id"
+grep -q "report-metadata w3 --source shved270189.worktree-status --token worktree_status=✅" "$FAKE_HERDR_LOG" || fail "restore w3 (dir missing but open)"
 assert_eq "$(load_status "$tmp/gone")" "" "missing dir pruned"
 assert_eq "$(load_status "$WT_C")" "" "open workspace with missing dir pruned too"
 assert_eq "$(load_status "$WT_A")" in_progress "existing dir kept"

@@ -29,7 +29,7 @@ No other runtime is needed: no `jq`, `fzf`, Node.js, or Python.
 ## Installation
 
 ```bash
-herdr plugin install bondev/herdr-worktree-status
+herdr plugin install shved270189/herdr-worktree-status
 ```
 
 Herdr shows the manifest and the commands it will run before confirming.
@@ -37,12 +37,12 @@ Herdr shows the manifest and the commands it will run before confirming.
 ### Local development
 
 ```bash
-git clone https://github.com/bondev/herdr-worktree-status.git
+git clone https://github.com/shved270189/herdr-worktree-status.git
 herdr plugin link /path/to/herdr-worktree-status
 bash tests/run.sh
 ```
 
-`herdr plugin unlink bondev.worktree-status` removes the link again.
+`herdr plugin unlink shved270189.worktree-status` removes the link again.
 
 ## Sidebar configuration (required)
 
@@ -65,7 +65,7 @@ Herdr menu). The plugin never edits `config.toml` for you.
 ## Usage
 
 The plugin registers one action, `Set worktree status…`
-(`bondev.worktree-status.set-status`). It applies to the workspace it was
+(`shved270189.worktree-status.set-status`). It applies to the workspace it was
 invoked from and opens a small popup:
 
 ```
@@ -87,7 +87,7 @@ Invoke it from a keybinding (recommended) or from the CLI. The CLI form targets
 the currently focused workspace:
 
 ```bash
-herdr plugin action invoke bondev.worktree-status.set-status
+herdr plugin action invoke shved270189.worktree-status.set-status
 ```
 
 ### Optional keybinding
@@ -99,7 +99,7 @@ only an example and may already be taken in your setup:
 [[keys.command]]
 key = "prefix+s"
 type = "plugin_action"
-command = "bondev.worktree-status.set-status"
+command = "shved270189.worktree-status.set-status"
 description = "set worktree status"
 ```
 
@@ -121,7 +121,7 @@ Only the emoji reaches the sidebar; the id is what the plugin persists.
 Herdr workspace metadata is display-only state and does not survive a cold
 server restart, so the plugin keeps its own record in
 `$HERDR_PLUGIN_STATE_DIR/statuses.tsv` (one `status<TAB>key` line per
-workspace; `herdr plugin config-dir bondev.worktree-status` prints the sibling
+workspace; `herdr plugin config-dir shved270189.worktree-status` prints the sibling
 config directory).
 
 - A worktree workspace is identified by its checkout path, so the status
@@ -136,11 +136,11 @@ config directory).
 ## Uninstall
 
 ```bash
-herdr plugin uninstall bondev.worktree-status
+herdr plugin uninstall shved270189.worktree-status
 ```
 
 This removes the managed checkout. Plugin state stays in
-`~/.local/state/herdr/plugins/bondev.worktree-status` (or the state directory
+`~/.local/state/herdr/plugins/shved270189.worktree-status` (or the state directory
 Herdr reports) and can be deleted by hand. Remove `$worktree_status` from your
 sidebar rows if you no longer want the column.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Shared helpers for the bondev.worktree-status plugin. Bash 3.2 compatible.
+# Shared helpers for the shved270189.worktree-status plugin. Bash 3.2 compatible.
 
-METADATA_SOURCE="bondev.worktree-status"
+METADATA_SOURCE="shved270189.worktree-status"
 TOKEN_NAME="worktree_status"
 # shellcheck disable=SC2034  # used by bin/picker
 STATUS_IDS="planning in_progress review blocked done"
