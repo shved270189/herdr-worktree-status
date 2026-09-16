@@ -4,19 +4,11 @@ A [Herdr](https://herdr.dev) plugin that assigns a workflow status to a
 worktree workspace and shows it as an emoji right before the workspace name in
 the sidebar.
 
-```
-○ 📝 · feature-a
-○ 🔨 · feature-b
-○ 👀 · feature-c
-○ ⛔ · feature-d
-○ ✅ · feature-e
-```
+![Herdr sidebar with worktree statuses](docs/screenshot.png)
 
-The leading `○` is Herdr's own `state_icon`; the emoji is the status set by
+The leading circle is Herdr's own `state_icon`; the emoji is the status set by
 this plugin. Statuses are stored by the plugin and restored automatically after
 a Herdr restart or when you reopen the same worktree.
-
-<!-- Screenshot placeholder: add docs/screenshot.png showing the sidebar with statuses. -->
 
 ## Requirements
 
