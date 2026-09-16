@@ -92,12 +92,12 @@ herdr plugin action invoke shved270189.worktree-status.set-status
 
 ### Optional keybinding
 
-The plugin does not add keybindings. Pick a free key yourself; `prefix+s` is
+The plugin does not add keybindings. Pick a free key yourself; `cmd+s` is
 only an example and may already be taken in your setup:
 
 ```toml
 [[keys.command]]
-key = "prefix+s"
+key = "cmd+s"
 type = "plugin_action"
 command = "shved270189.worktree-status.set-status"
 description = "set worktree status"
