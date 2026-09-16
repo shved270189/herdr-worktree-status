@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Startup/event hook: re-apply persisted statuses to open workspaces and
+# forget entries whose worktree directory no longer exists.
+set -euo pipefail
+. "$(dirname "$0")/lib.sh"
+
+file=$(state_file)
+[ -s "$file" ] || exit 0
+
+ids=$(json_workspace_ids "$(herdr workspace list)")
+for workspace_id in $ids; do
+  workspace_json=$(herdr workspace get "$workspace_id") || continue
+  key=$(workspace_key "$workspace_json" "$workspace_id")
+  status=$(load_status "$key")
+  [ -z "$status" ] || apply_status "$workspace_id" "$status" || true
+done
+
+while IFS=$'\t' read -r status key; do
+  case "$key" in
+    /*) [ -d "$key" ] || save_status "$key" "" ;;
+  esac
+done < "$file"

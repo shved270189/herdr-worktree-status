@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Plugin action: open the status picker popup for the invoking workspace.
+set -euo pipefail
+. "$(dirname "$0")/lib.sh"
+
+[ -n "${HERDR_WORKSPACE_ID:-}" ] || die "no workspace in action context (HERDR_WORKSPACE_ID is empty)"
+[ -n "${HERDR_PLUGIN_ID:-}" ] || die "HERDR_PLUGIN_ID is not set; run this as a Herdr plugin action"
+
+key=$(workspace_key "${HERDR_PLUGIN_CONTEXT_JSON:-}" "$HERDR_WORKSPACE_ID")
+
+exec "${HERDR_BIN_PATH:-herdr}" plugin pane open \
+  --plugin "$HERDR_PLUGIN_ID" \
+  --entrypoint status-picker \
+  --env "WORKTREE_STATUS_WORKSPACE_ID=$HERDR_WORKSPACE_ID" \
+  --env "WORKTREE_STATUS_KEY=$key" \
+  --focus

@@ -1,0 +1,27 @@
+id = "bondev.worktree-status"
+name = "Worktree Status"
+version = "0.1.0"
+min_herdr_version = "0.7.5"
+description = "Assign a workflow status emoji to Herdr worktree workspaces and show it in the sidebar"
+platforms = ["macos", "linux"]
+
+[[startup]]
+command = ["bash", "bin/restore-statuses"]
+
+[[events]]
+on = "workspace.created"
+command = ["bash", "bin/restore-statuses"]
+
+[[actions]]
+id = "set-status"
+title = "Set worktree status…"
+contexts = ["workspace"]
+command = ["bash", "bin/set-status"]
+
+[[panes]]
+id = "status-picker"
+title = "Set worktree status"
+placement = "popup"
+width = 40
+height = 12
+command = ["bash", "bin/picker"]

@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# Popup pane: pick a status with arrows/j/k, Enter applies, Esc/q cancels.
+set -euo pipefail
+. "$(dirname "$0")/lib.sh"
+
+workspace_id=${WORKTREE_STATUS_WORKSPACE_ID:-}
+key=${WORKTREE_STATUS_KEY:-}
+[ -n "$workspace_id" ] && [ -n "$key" ] || die "run this through the 'Set worktree status…' action; missing WORKTREE_STATUS_* env"
+
+items="$STATUS_IDS clear"
+count=0
+selected=0
+current=$(load_status "$key")
+for item in $items; do
+  [ "$item" = "$current" ] && selected=$count
+  count=$((count + 1))
+done
+
+render() {
+  local index=0 item emoji label
+  printf '\033[H\033[2J\033[1mSet worktree status\033[0m\n\n'
+  for item in $items; do
+    if [ "$item" = clear ]; then
+      emoji='  '
+      label='Clear'
+    else
+      emoji=$(status_emoji "$item")
+      label=$(status_label "$item")
+    fi
+    if [ "$index" -eq "$selected" ]; then
+      printf '\033[7m > %s  %s \033[0m\n' "$emoji" "$label"
+    else
+      printf '   %s  %s\n' "$emoji" "$label"
+    fi
+    index=$((index + 1))
+  done
+  printf '\n\033[2m↑↓ move · Enter select · Esc cancel\033[0m'
+}
+
+nth_item() {
+  local index=0 item
+  for item in $items; do
+    [ "$index" -eq "$1" ] && { printf '%s' "$item"; return; }
+    index=$((index + 1))
+  done
+}
+
+cleanup() {
+  printf '\033[?25h\033[0m\n'
+}
+trap cleanup EXIT
+
+printf '\033[?25l'
+while :; do
+  render
+  IFS= read -rsn1 input || exit 0
+  case "$input" in
+    $'\e')
+      seq=''
+      IFS= read -rsn2 -t 1 seq || true
+      case "$seq" in
+        '[A') selected=$(( (selected + count - 1) % count )) ;;
+        '[B') selected=$(( (selected + 1) % count )) ;;
+        '') exit 0 ;;
+      esac
+      ;;
+    k) selected=$(( (selected + count - 1) % count )) ;;
+    j) selected=$(( (selected + 1) % count )) ;;
+    q) exit 0 ;;
+    ''|$'\n'|$'\r')
+      choice=$(nth_item "$selected")
+      [ "$choice" = clear ] && choice=''
+      if ! apply_status "$workspace_id" "$choice"; then
+        printf '\n\033[31mFailed to update workspace %s.\033[0m Press any key.' "$workspace_id"
+        read -rsn1 _ || true
+        exit 1
+      fi
+      save_status "$key" "$choice"
+      exit 0
+      ;;
+  esac
+done
